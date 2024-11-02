@@ -37,7 +37,7 @@ const convertToImageData = (docData: DocumentData): ImageData => {
         year: docData.year || null,
         type: docData.type || null,
         size: docData.size || null,
-        is360: docData.is360 || false,
+        is360: docData.is360,
         link360: docData.link360 || null
     };
 };

@@ -9,4 +9,6 @@ export interface ImageData {
   year: number | null;
   type: string | null;
   size: string | null;
+  is360: boolean;
+  link360: string | null;
 }
