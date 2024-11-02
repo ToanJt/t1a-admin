@@ -47,7 +47,7 @@ const checkForm = () => {
     if (projectData.name && projectData.client
         && projectData.description && projectData.year
         && projectData.images.length > 0
-        && (projectData.is360 && projectData.link360) || !projectData.is360) {
+        && ((projectData.is360 && projectData.link360) || !projectData.is360)) {
         createProject(projectData);
         toast.success("Thêm dự án thành công !");
         clearData();

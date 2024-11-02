@@ -45,7 +45,7 @@ const checkForm = () => {
     if (projectDetails.name && projectDetails.client
         && projectDetails.description && projectDetails.year
         && projectDetails.images.length > 0
-        && (projectDetails.is360 && projectDetails.link360) || !projectDetails.is360) {
+        && ((projectDetails.is360 && projectDetails.link360) || !projectDetails.is360)) {
         updateProject();
         toast.info("Cập nhật dự án thành công !");
     }
