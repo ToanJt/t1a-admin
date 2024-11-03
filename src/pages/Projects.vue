@@ -13,6 +13,7 @@ let filterBySize = ref('all');
 let filterByType = ref('all');
 let project360 = ref(false);
 let filterByName = ref('');
+
 const projectsFilter = computed(() => {
     return projects.value.filter((project) => {
         console.log(project);
@@ -129,7 +130,7 @@ onMounted(async () => {
             <div v-for="project in projectsFilter"
                 class="relative rounded-md project-image cursor-pointer overflow-hidden ">
                 <router-link :to="{ name: 'update-project', params: { id: slugify(project.name) } }" class="relative ">
-                    <img class=" transition-all duration-500 " :src="project.thumbnailURL"
+                    <img class="object-cover transition-all duration-500 " :src="project.thumbnailURL"
                         :alt="project.description || undefined" />
                     <div
                         class="project-description transition-all duration-500  text-white p-6 bg-vr-light-gray-blur flex flex-col justify-center items-center absolute top-0 left-0 right-0 bottom-0">

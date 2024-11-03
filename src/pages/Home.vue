@@ -349,7 +349,7 @@ onMounted(async () => {
                                         class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                         placeholder="Content 2" />
                                 </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.content1" class="text-red-500 text-[12px] mt-2">
+                                <p v-if="!checkDataIsNotEmptyOfUpdate.content2" class="text-red-500 text-[12px] mt-2">
                                     Vui lòng
                                     nhập
                                     nội dung
@@ -363,7 +363,7 @@ onMounted(async () => {
                                         class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                         placeholder="Content 3" />
                                 </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.content1" class="text-red-500 text-[12px] mt-2">
+                                <p v-if="!checkDataIsNotEmptyOfUpdate.content3" class="text-red-500 text-[12px] mt-2">
                                     Vui lòng
                                     nhập
                                     nội dung
