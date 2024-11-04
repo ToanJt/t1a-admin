@@ -208,6 +208,12 @@ function clearData() {
     inputData.content2 = '';
     inputData.content3 = '';
 }
+const closeForm = () => {
+    isActive.value = false;
+}
+const stopPropagation = (Event: MouseEvent) => {
+    Event.stopPropagation();
+}
 
 onMounted(async () => {
     const getFeedbacks = await getDocs(collection(db, 'feedbacks'));
@@ -252,9 +258,9 @@ onMounted(async () => {
                         </div>
                         <div class="w-full mb-8 min-w-[200px]">
                             <label for="content-1">Feedback 1:</label>
-                            <div class="relative flex items-center h-12">
-                                <input v-model="inputData.content1" type="text" id="content-1"
-                                    class="mt-2 w-full h-12 pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                            <div class="relative flex items-center ">
+                                <textarea rows="3" v-model="inputData.content1" type="text" id="content-1"
+                                    class="mt-2 w-full  pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                     placeholder="Feedback" />
                             </div>
                             <p v-if="!checkDataIsNotEmpty.content1" class="text-red-500 text-[12px] mt-2">Vui lòng nhập
@@ -263,17 +269,17 @@ onMounted(async () => {
                         </div>
                         <div class="w-full mb-8 min-w-[200px]">
                             <label for="content-2">Feedback 2 (tùy chọn):</label>
-                            <div class="relative flex items-center h-12">
-                                <input v-model="inputData.content2" type="text" id="content-2"
-                                    class="mt-2 w-full h-12 pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                            <div class="relative flex items-center ">
+                                <textarea rows="3" v-model="inputData.content2" type="text" id="content-2"
+                                    class="mt-2 w-full  pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                     placeholder="Feedback" />
                             </div>
                         </div>
                         <div class="w-full mb-8 min-w-[200px]">
                             <label for="content-3">Feedback 3 (tùy chọn):</label>
-                            <div class="relative flex items-center h-12">
-                                <input v-model="inputData.content3" type="text" id="content-3"
-                                    class="mt-2 w-full h-12 pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                            <div class="relative flex items-center ">
+                                <textarea rows="3" v-model="inputData.content3" type="text" id="content-3"
+                                    class="mt-2 w-full  pl-3 pr-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                     placeholder="Feedback" />
                             </div>
                         </div>
@@ -320,93 +326,102 @@ onMounted(async () => {
                             </div>
                         </div>
                     </div>
-                    <div :class="{ 'hidden': !isActive }"
-                        class=" transition-all duration-500 grid shadowBox gap-4 mb-8 bg-white p-6 rounded-md border border-solid">
-                        <p class="text-xl font-semibold">Chỉnh sửa thông tin khách hàng</p>
-                        <div>
-                            <div class="w-full mb-6 min-w-[200px]">
-                                <label for="customer-name">Nhập tên khách hàng</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="inputDataEdit.customerName" type="text" id="customer-name"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="Customer Name" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.customerName"
-                                    class="text-red-500 text-[12px] mt-2">
-                                    Vui lòng nhập tên khách hàng !
-                                </p>
-                            </div>
-                            <div class="w-full mb-6 mt-6 min-w-[200px]">
-                                <label for="content1">Khách hàng đến từ</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="inputDataEdit.from" type="text" id="content1"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="Content 1" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.from" class="text-red-500 text-[12px] mt-2">
-                                    Vui lòng
-                                    nhập khách hàng đến từ đâu !
-                                </p>
-                            </div>
-                            <div class="w-full mb-6 mt-6 min-w-[200px]">
-                                <label for="content1">Nội dung 1</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="inputDataEdit.content1" type="text" id="content1"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="Content 1" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.content1" class="text-red-500 text-[12px] mt-2">
-                                    Vui lòng nhập
-                                    ít nhất một phản hồi của khách hàng !
-                                </p>
-                            </div>
-                            <div class="w-full mb-6 mt-6 min-w-[200px]">
-                                <label for="content2">Nội dung 2 (Tùy chọn)</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="inputDataEdit.content2" type="text" id="content2"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="Content 2" />
-                                </div>
-                            </div>
-                            <div class="w-full mb-6 mt-6 min-w-[200px]">
-                                <label for="content3">Nội dung 3 (Tùy chọn)</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="inputDataEdit.content3" type="text" id="content3"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="Content 3" />
-                                </div>
-                            </div>
-                            <div class="w-full mb-6 min-w-[200px]">
-                                <label for="avatar">Chọn ảnh đại diện</label>
-                                <div class="relative flex items-center h-12">
-                                    <input type="file" ref="file" accept=".jpg, .jpeg, .png" id="avatar"
-                                        @change="onchangeUpdate"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.avatar" class="text-red-500 text-[12px] mt-2">Vui
-                                    lòng
-                                    chọn
-                                    ảnh đại diện của khách hàng !
-                                </p>
-                            </div>
-                            <Loading v-if="loadingUpdate"></Loading>
-                            <img v-else class="rounded-md" :src="inputDataEdit.avatar" alt="">
-                            <div class="flex gap-4 mt-6">
-                                <button @click="checkUpdateForm()"
-                                    class="flex items-center rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                    type="button">
-                                    Cập nhật
-                                </button>
-                                <button @click="editForm({})"
-                                    class="flex items-center rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                    type="button">
-                                    Quay lại
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </form>
+        <div :class="{ 'hidden': !isActive }" @click="closeForm()"
+            class="fixed flex justify-center bg-black-rgba px-60 py-20 top-0 right-0 left-0 bottom-0">
+            <div @click="stopPropagation"
+                class="relative w-2/3 h-full overflow-y-scroll transition-all duration-500 grid shadowBox gap-4 mb-8 bg-white rounded-md border border-solid">
+                <div class="flex justify-between sticky z-50 top-0 left-0 right-0 p-5 bg-white border-b">
+                    <p class="text-xl font-semibold">Chỉnh sửa
+                        thông
+                        tin
+                    </p>
+
+                    <i @click="closeForm()" class="text-red-500 cursor-pointer text-xl fa-solid fa-xmark"></i>
+                </div>
+                <div class="px-6 pb-6">
+                    <div class="w-full mb-6 min-w-[200px]">
+                        <label for="customer-name">Nhập tên khách hàng</label>
+                        <div class="relative flex items-center h-12">
+                            <input v-model="inputDataEdit.customerName" type="text" id="customer-name"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="Customer Name" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.customerName" class="text-red-500 text-[12px] mt-2">
+                            Vui lòng nhập tên khách hàng !
+                        </p>
+                    </div>
+                    <div class="w-full mb-6 mt-6 min-w-[200px]">
+                        <label for="content1">Khách hàng đến từ</label>
+                        <div class="relative flex items-center h-12">
+                            <input v-model="inputDataEdit.from" type="text" id="content1"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="Content 1" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.from" class="text-red-500 text-[12px] mt-2">
+                            Vui lòng
+                            nhập khách hàng đến từ đâu !
+                        </p>
+                    </div>
+                    <div class="w-full mb-6 mt-6 min-w-[200px]">
+                        <label for="content1">Feedback 1</label>
+                        <div class="relative flex items-center ">
+                            <textarea rows="3" v-model="inputDataEdit.content1" type="text" id="content1"
+                                class="mt-2 w-full  pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="Content 1" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.content1" class="text-red-500 text-[12px] mt-2">
+                            Vui lòng nhập
+                            ít nhất một phản hồi của khách hàng !
+                        </p>
+                    </div>
+                    <div class="w-full mb-6 mt-6 min-w-[200px]">
+                        <label for="content2">Feedback 2 (Tùy chọn)</label>
+                        <div class="relative flex items-center ">
+                            <textarea rows="3" v-model="inputDataEdit.content2" type="text" id="content2"
+                                class="mt-2 w-full  pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="Content 2" />
+                        </div>
+                    </div>
+                    <div class="w-full mb-6 mt-6 min-w-[200px]">
+                        <label for="content3">Feedback 3 (Tùy chọn)</label>
+                        <div class="relative flex items-center ">
+                            <textarea rows="3" v-model="inputDataEdit.content3" type="text" id="content3"
+                                class="mt-2 w-full  pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="Content 3" />
+                        </div>
+                    </div>
+                    <div class="w-full mb-6 min-w-[200px]">
+                        <label for="avatar">Chọn ảnh đại diện</label>
+                        <div class="relative flex items-center h-12">
+                            <input type="file" ref="file" accept=".jpg, .jpeg, .png" id="avatar"
+                                @change="onchangeUpdate"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.avatar" class="text-red-500 text-[12px] mt-2">Vui
+                            lòng
+                            chọn
+                            ảnh đại diện của khách hàng !
+                        </p>
+                    </div>
+                    <Loading v-if="loadingUpdate"></Loading>
+                    <img v-else class="rounded-md w-1/3" :src="inputDataEdit.avatar" alt="">
+                    <div class="flex gap-4 mt-6">
+                        <button @click="checkUpdateForm()"
+                            class="flex items-center rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button">
+                            Cập nhật
+                        </button>
+                        <button @click="editForm({})"
+                            class="flex items-center rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button">
+                            Quay lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

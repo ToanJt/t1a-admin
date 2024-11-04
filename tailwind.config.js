@@ -16,6 +16,7 @@ export default {
         primary: "#39465f",
         "vr-light-gray": "rgb(249, 249, 249)",
         "vr-light-gray-blur": "rgb(0, 0, 0, 0.65)",
+        "black-rgba": "rgba(0, 0, 0, 0.65)",
       },
     },
   },

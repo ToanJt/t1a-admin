@@ -249,6 +249,13 @@ const hiddenTeam = () => {
     isActiveTeam.value = !isActiveTeam.value;
     activeTeam(isActiveTeam.value);
 }
+const closeForm = () => {
+    isActive.value = false;
+}
+const stopPropagation = (Event: MouseEvent) => {
+    Event.stopPropagation();
+}
+
 
 const loadingPage = ref(true);
 onMounted(() => {
@@ -355,73 +362,85 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div :class="{ 'hidden': !isActive }"
-                        class=" transition-all duration-500 grid shadowBox gap-4 mb-8 bg-white p-6 rounded-md border border-solid">
-                        <p class="text-xl font-semibold">Chỉnh sửa thông tin</p>
-                        <div>
-                            <div class="w-full mb-6 min-w-[200px]">
-                                <label for="facebook">Nhập tên mới</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="memberEditData.fullname" type="text" id="facebook"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="New Fullname" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.fullname" class="text-red-500 text-[12px] mt-2">
-                                    Vui lòng
-                                    nhập
-                                    họ tên thành
-                                    viên
-                                </p>
-                            </div>
-                            <div class="w-full mb-6 mt-6 min-w-[200px]">
-                                <label for="facebook">Nhập chức vụ mới</label>
-                                <div class="relative flex items-center h-12">
-                                    <input v-model="memberEditData.position" type="text" id="facebook"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                        placeholder="New Position" />
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.position" class="text-red-500 text-[12px] mt-2">
-                                    Vui lòng
-                                    chức
-                                    vụ thành viên
-                                </p>
-                            </div>
-                            <div class="w-full mb-6 min-w-[200px]">
-                                <label for="avatar">Chọn ảnh đại diện</label>
-                                <div class="relative flex items-center h-12">
-                                    <input type="file" ref="file" accept=".jpg, .jpeg, .png" id="avatar"
-                                        @change="onchangeUpdate"
-                                        class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow" />
 
-                                    <div class="absolute h-full flex items-center right-2.5 text-slate-600">
-                                        <i class="fa-regular fa-copy"></i>
-                                    </div>
-                                </div>
-                                <p v-if="!checkDataIsNotEmptyOfUpdate.avatar" class="text-red-500 text-[12px] mt-2">Vui
-                                    lòng
-                                    chọn
-                                    ảnh đại diện
-                                </p>
-                            </div>
-                            <Loading v-if="loadingUpdate"></Loading>
-                            <img v-else class="rounded-md" :src="memberEditData.avatar" alt="">
-                            <div class="flex gap-4 mt-6">
-                                <button @click="checkFormUpdate()"
-                                    class="flex items-center rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                    type="button">
-                                    Cập nhật
-                                </button>
-                                <button @click="editForm({})"
-                                    class="flex items-center rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                    type="button">
-                                    Quay lại
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </form>
+        <div :class="{ 'hidden': !isActive }" @click="closeForm()"
+            class="fixed flex justify-center bg-black-rgba px-60 py-20 top-0 right-0 left-0 bottom-0">
+            <div @click="stopPropagation"
+                class="relative h-full overflow-y-scroll transition-all duration-500 grid shadowBox gap-4 mb-8 bg-white rounded-md border border-solid">
+                <div class="flex justify-between sticky z-50 top-0 left-0 right-0 p-5 bg-white border-b">
+                    <p class="text-xl font-semibold">Chỉnh sửa
+                        thông
+                        tin
+                    </p>
+
+                    <i @click="closeForm()" class="text-red-500 cursor-pointer text-xl fa-solid fa-xmark"></i>
+                </div>
+                <form class="px-6 pb-6">
+                    <div class="w-full mb-6 min-w-[200px]">
+                        <label for="facebook">Nhập tên mới</label>
+                        <div class="relative flex items-center h-12">
+                            <input v-model="memberEditData.fullname" type="text" id="facebook"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="New Fullname" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.fullname" class="text-red-500 text-[12px] mt-2">
+                            Vui lòng
+                            nhập
+                            họ tên thành
+                            viên
+                        </p>
+                    </div>
+                    <div class="w-full mb-6 mt-6 min-w-[200px]">
+                        <label for="facebook">Nhập chức vụ mới</label>
+                        <div class="relative flex items-center h-12">
+                            <input v-model="memberEditData.position" type="text" id="facebook"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                placeholder="New Position" />
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.position" class="text-red-500 text-[12px] mt-2">
+                            Vui lòng
+                            chức
+                            vụ thành viên
+                        </p>
+                    </div>
+                    <div class="w-full mb-6 min-w-[200px]">
+                        <label for="avatar">Chọn ảnh đại diện</label>
+                        <div class="relative flex items-center h-12">
+                            <input type="file" ref="file" accept=".jpg, .jpeg, .png" id="avatar"
+                                @change="onchangeUpdate"
+                                class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow" />
+
+                            <div class="absolute h-full flex items-center right-2.5 text-slate-600">
+                                <i class="fa-regular fa-copy"></i>
+                            </div>
+                        </div>
+                        <p v-if="!checkDataIsNotEmptyOfUpdate.avatar" class="text-red-500 text-[12px] mt-2">Vui
+                            lòng
+                            chọn
+                            ảnh đại diện
+                        </p>
+                    </div>
+                    <Loading v-if="loadingUpdate"></Loading>
+                    <img v-else class="rounded-md" :src="memberEditData.avatar" alt="">
+                    <div class="flex gap-4 mt-6">
+                        <button @click="checkFormUpdate()"
+                            class="flex items-center rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button">
+                            Cập nhật
+                        </button>
+                        <button @click="editForm({})"
+                            class="flex items-center rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button">
+                            Quay lại
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </template>
 
