@@ -12,6 +12,7 @@ const projects = ref<DocumentData[]>([]);
 let filterBySize = ref('all');
 let filterByType = ref('all');
 let project360 = ref(false);
+let projectAnimation = ref(false);
 let filterByName = ref('');
 
 const projectsFilter = computed(() => {
@@ -21,6 +22,7 @@ const projectsFilter = computed(() => {
         const typeMatches = filterByType.value === 'all' || project.type === filterByType.value;
         const nameMatches = filterByName.value === '' || project.name.toLowerCase().startsWith(filterByName.value.toLowerCase());
         const is360Matches = !project360.value || project.is360 === project360.value;
+        const isAnimationMatches = !projectAnimation.value || project.is
         return sizeMatches && typeMatches && nameMatches && is360Matches;
     })
 })
@@ -141,7 +143,7 @@ onMounted(async () => {
                                 <Icon icon="mdi:dot" width="1em" height="1em" style="color: white" />
                             </div>
                             <p class="text-15 mx-2">Year: {{ project.year
-                                }}</p>
+                            }}</p>
                             <div class="flex items-center">
                                 <Icon icon="mdi:dot" width="1em" height="1em" style="color: white" />
                             </div>

@@ -18,10 +18,12 @@ const projectDetails = reactive({
     thumbnailURL: '',
     description: '',
     client: '',
+    location: '',
     year: '',
     type: '',
     size: '',
     is360: false,
+    isAnimation: false,
     link360: '',
     images: Array<string>()
 })
@@ -30,6 +32,7 @@ const checkDataIsNotEmpty = reactive({
     name: true,
     description: true,
     client: true,
+    location: true,
     year: true,
     images: true,
     link360: true
@@ -40,12 +43,14 @@ const props = defineProps({
 })
 
 const checkForm = () => {
-    checkDataIsNotEmpty.name = checkDataIsNotEmpty.client = checkDataIsNotEmpty.description = true
+    checkDataIsNotEmpty.name = checkDataIsNotEmpty.client = checkDataIsNotEmpty.description = checkDataIsNotEmpty.location = true
     checkDataIsNotEmpty.year = checkDataIsNotEmpty.images = checkDataIsNotEmpty.link360 = true;
-    if (projectDetails.name && projectDetails.client
+    if (projectDetails.name && projectDetails.client && projectDetails.location
         && projectDetails.description && projectDetails.year
         && projectDetails.images.length > 0
-        && ((projectDetails.is360 && projectDetails.link360) || !projectDetails.is360)) {
+        && ((projectDetails.is360 && projectDetails.link360) || !projectDetails.is360)
+        && projectDetails.isAnimation || !projectDetails.isAnimation
+    ) {
         updateProject();
         toast.info("Cập nhật dự án thành công !");
     }
@@ -54,6 +59,8 @@ const checkForm = () => {
             checkDataIsNotEmpty.name = false;
         if (!projectDetails.client)
             checkDataIsNotEmpty.client = false;
+        if (!projectDetails.location)
+            checkDataIsNotEmpty.location = false;
         if (!projectDetails.description)
             checkDataIsNotEmpty.description = false;
         if (!projectDetails.year)
@@ -121,10 +128,12 @@ async function updateProject() {
                 name: projectDetails.name,
                 description: projectDetails.description,
                 client: projectDetails.client,
+                location: projectDetails.location,
                 year: projectDetails.year,
                 type: projectDetails.type,
                 size: projectDetails.size,
                 is360: projectDetails.is360,
+                isAnimation: projectDetails.isAnimation,
                 link360: projectDetails.link360,
                 images: arrayUnion(...projectDetails.images)
             })
@@ -146,10 +155,12 @@ onMounted(async () => {
             projectDetails.thumbnailURL = doc.data().thumbnailURL;
             projectDetails.description = doc.data().description;
             projectDetails.client = doc.data().client;
+            projectDetails.location = doc.data().location;
             projectDetails.year = doc.data().year;
             projectDetails.type = doc.data().type;
             projectDetails.size = doc.data().size;
             projectDetails.is360 = doc.data().is360;
+            projectDetails.isAnimation = doc.data().isAnimation;
             projectDetails.link360 = doc.data().link360;
             doc.data().images.forEach((img: string) => {
                 isLoading.value = true;
@@ -220,29 +231,21 @@ async function deleteProject() {
                                     </svg>
                                 </div>
                             </div>
-                            <div class="w-full max-w-sm min-w-[200px]">
-                                <label for="project-size">Kích thước</label>
-                                <div class="relative mt-2">
-                                    <select v-model="projectDetails.size" id="project-size"
-                                        class="w-full h-12 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-                                        <option value="small">Small</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="large">Large</option>
-                                    </select>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.2" stroke="currentColor"
-                                        class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                    </svg>
-                                </div>
+
+                        </div>
+                        <div class="flex gap-20 mb-8">
+                            <div class="flex items-center gap-1">
+                                <input v-model="projectDetails.is360" :checked="projectDetails.is360"
+                                    class="h-5 w-5 cursor-pointer" type="checkbox" name="" id="360">
+                                <label class="cursor-pointer" for="360">360°</label>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <input v-model="projectDetails.isAnimation" :checked="projectDetails.isAnimation"
+                                    class="h-5 w-5 cursor-pointer" type="checkbox" name="" id="animation">
+                                <label class="cursor-pointer" for="animation">Animation</label>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <input v-model="projectDetails.is360" :checked="projectDetails.is360"
-                                class="h-5 w-5 cursor-pointer" type="checkbox" name="" id="360">
-                            <label class="cursor-pointer" for="360">Đây là dự án 360°</label>
-                        </div>
+
                         <div v-if="projectDetails.is360" class="relative flex items-center h-12">
                             <input v-model="projectDetails.link360" type="text" id="project-name"
                                 class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
@@ -256,6 +259,19 @@ async function deleteProject() {
                             <p>Có thể render 360° ở trang sau: </p>
                             <a class="py-1 px-2 rounded-full bg-blue-500 text-white" href="https://momento360.com/#"
                                 target="_blank">momento360</a>
+                        </div>
+                        <div class="w-full mb-8 min-w-[200px]">
+                            <label for="project-location">Vị trí</label>
+                            <div class="relative flex items-center h-12">
+                                <input v-model="projectDetails.location" type="text" id="project-location"
+                                    class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    placeholder="Nhập vị trí dự án..." />
+                            </div>
+                            <p v-if="!checkDataIsNotEmpty.location" class="text-red-500 text-[12px] mt-2">Vui lòng
+                                nhập
+                                vị trí
+                                dự án !
+                            </p>
                         </div>
                         <div class="w-full my-8 min-w-[200px]">
                             <label for="project-year">Năm</label>

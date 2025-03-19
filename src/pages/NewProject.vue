@@ -15,10 +15,12 @@ const projectData = reactive({
     name: '',
     description: '',
     client: '',
+    location: '',
     year: 2024,
     type: 'full-project',
     size: 'small',
     is360: false,
+    isAnimation: false,
     link360: '',
     images: Array<string>()
 })
@@ -26,6 +28,7 @@ const checkDataIsNotEmpty = reactive({
     name: true,
     description: true,
     client: true,
+    location: true,
     year: true,
     link360: true,
     images: true
@@ -35,19 +38,23 @@ const clearData = () => {
     projectData.name = '';
     projectData.description = '';
     projectData.client = '';
+    projectData.location = '';
     projectData.is360 = false;
+    projectData.isAnimation = false;
     projectData.link360 = '';
     projectData.images.splice(0, projectData.images.length);
     showFile.value.splice(0, showFile.value.length);
 }
 
 const checkForm = () => {
-    checkDataIsNotEmpty.name = checkDataIsNotEmpty.client = checkDataIsNotEmpty.description = true
+    checkDataIsNotEmpty.name = checkDataIsNotEmpty.client = checkDataIsNotEmpty.description = checkDataIsNotEmpty.location = true
     checkDataIsNotEmpty.year = checkDataIsNotEmpty.images = checkDataIsNotEmpty.link360 = true;
-    if (projectData.name && projectData.client
+    if (projectData.name && projectData.client && projectData.location
         && projectData.description && projectData.year
         && projectData.images.length > 0
-        && ((projectData.is360 && projectData.link360) || !projectData.is360)) {
+        && ((projectData.is360 && projectData.link360) || !projectData.is360)
+        && projectData.isAnimation || !projectData.isAnimation
+    ) {
         createProject(projectData);
         toast.success("Thêm dự án thành công !");
         clearData();
@@ -57,6 +64,8 @@ const checkForm = () => {
             checkDataIsNotEmpty.name = false;
         if (!projectData.client)
             checkDataIsNotEmpty.client = false;
+        if (!projectData.location)
+            checkDataIsNotEmpty.location = false;
         if (!projectData.description)
             checkDataIsNotEmpty.description = false;
         if (!projectData.year)
@@ -151,28 +160,19 @@ const prevPage = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <div class="w-full max-w-sm min-w-[200px]">
-                                <label for="project-size">Kích thước</label>
-                                <div class="relative mt-2">
-                                    <select v-model="projectData.size" id="project-size"
-                                        class="w-full h-12 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-                                        <option value="small">Small</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="large">Large</option>
-                                    </select>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.2" stroke="currentColor"
-                                        class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                    </svg>
-                                </div>
-                            </div>
+
                         </div>
-                        <div class="flex items-center gap-1">
-                            <input v-model="projectData.is360" class="h-5 w-5 cursor-pointer" type="checkbox" name=""
-                                id="360">
-                            <label class="cursor-pointer" for="360">Đây là dự án 360°</label>
+                        <div class="flex gap-20 mb-8">
+                            <div class="flex items-center gap-1">
+                                <input v-model="projectData.is360" class="h-5 w-5 cursor-pointer" type="checkbox"
+                                    name="" id="360">
+                                <label class="cursor-pointer" for="360">360°</label>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <input v-model="projectData.isAnimation" class="h-5 w-5 cursor-pointer" type="checkbox"
+                                    name="" id="animation">
+                                <label class="cursor-pointer" for="animation">Animation</label>
+                            </div>
                         </div>
                         <div v-if="projectData.is360" class="relative flex items-center h-12">
                             <input v-model="projectData.link360" type="text" id="project-name"
@@ -187,6 +187,20 @@ const prevPage = () => {
                             <p>Có thể render 360° ở trang sau: </p>
                             <a class="py-1 px-2 rounded-full bg-blue-500 text-white" href="https://momento360.com/#"
                                 target="_blank">momento360</a>
+                        </div>
+
+                        <div class="w-full mb-8 min-w-[200px]">
+                            <label for="project-location">Vị trí</label>
+                            <div class="relative flex items-center h-12">
+                                <input v-model="projectData.location" type="text" id="project-location"
+                                    class="mt-2 w-full h-12 pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-200 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    placeholder="Nhập vị trí dự án..." />
+                            </div>
+                            <p v-if="!checkDataIsNotEmpty.location" class="text-red-500 text-[12px] mt-2">Vui lòng
+                                nhập
+                                vị trí
+                                dự án !
+                            </p>
                         </div>
                         <div class="w-full my-8 min-w-[200px]">
                             <label for="project-year">Năm</label>
