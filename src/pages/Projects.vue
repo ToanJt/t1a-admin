@@ -9,7 +9,6 @@ import type { ImageData } from '../types/imageData';
 import { computed } from '@vue/reactivity';
 
 const projects = ref<DocumentData[]>([]);
-let filterBySize = ref('all');
 let filterByType = ref('all');
 let project360 = ref(false);
 let projectAnimation = ref(false);
@@ -18,12 +17,11 @@ let filterByName = ref('');
 const projectsFilter = computed(() => {
     return projects.value.filter((project) => {
         console.log(project);
-        const sizeMatches = filterBySize.value === 'all' || project.size === filterBySize.value;
         const typeMatches = filterByType.value === 'all' || project.type === filterByType.value;
         const nameMatches = filterByName.value === '' || project.name.toLowerCase().startsWith(filterByName.value.toLowerCase());
         const is360Matches = !project360.value || project.is360 === project360.value;
-        const isAnimationMatches = !projectAnimation.value || project.is
-        return sizeMatches && typeMatches && nameMatches && is360Matches;
+        const isAnimationMatches = !projectAnimation.value || project.isAnimation === projectAnimation.value;
+        return typeMatches && nameMatches && is360Matches && isAnimationMatches;
     })
 })
 
@@ -41,6 +39,7 @@ const convertToImageData = (docData: DocumentData): ImageData => {
         type: docData.type || null,
         size: docData.size || null,
         is360: docData.is360,
+        isAnimation: docData.isAnimation,
         link360: docData.link360 || null
     };
 };
@@ -81,22 +80,7 @@ onMounted(async () => {
                         </svg>
                     </button>
                 </div>
-                <div class="w-full max-w-sm min-w-[200px]">
-                    <div class="relative">
-                        <select v-model="filterBySize"
-                            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-                            <option value="all">All</option>
-                            <option value="small">Small</option>
-                            <option value="medium">Medium</option>
-                            <option value="large">Large</option>
-                        </select>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2"
-                            stroke="currentColor" class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                        </svg>
-                    </div>
-                </div>
+
                 <div class="w-full max-w-sm min-w-[200px]">
                     <div class="relative">
                         <select v-model="filterByType"
@@ -116,6 +100,11 @@ onMounted(async () => {
                 <div class="ml-2 flex items-center gap-1">
                     <input v-model="project360" class="h-5 w-5 cursor-pointer" type="checkbox" name="" id="360">
                     <label class="cursor-pointer" for="360">360°</label>
+                </div>
+                <div class="ml-2 flex items-center gap-1">
+                    <input v-model="projectAnimation" class="h-5 w-5 cursor-pointer" type="checkbox" name=""
+                        id="animation">
+                    <label class="cursor-pointer" for="animation">Animation</label>
                 </div>
             </div>
             <button @click="createProject()"

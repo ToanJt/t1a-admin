@@ -10,5 +10,6 @@ export interface ImageData {
   type: string | null;
   size: string | null;
   is360: boolean;
+  isAnimation: boolean;
   link360: string | null;
 }
