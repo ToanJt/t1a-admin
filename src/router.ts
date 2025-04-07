@@ -4,6 +4,7 @@ import Projects from "./pages/Projects.vue";
 import AboutUs from "./pages/AboutUs.vue";
 import Contact from "./pages/Contact.vue";
 import Feedback from "./pages/Feedback.vue";
+import Customers from "./pages/Customers.vue";
 import UpdateProject from "./pages/UpdateProject.vue";
 import NewProject from "./pages/NewProject.vue";
 
@@ -48,6 +49,11 @@ const routes = [
     path: "/feedback",
     name: "feedback",
     component: Feedback,
+  },
+  {
+    path: "/customer",
+    name: "customer",
+    component: Customers,
   },
 ];
 

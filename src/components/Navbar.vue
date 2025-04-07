@@ -36,7 +36,12 @@
                         <li>Feedback</li>
                     </div>
                 </router-link>
-
+                <router-link to="/customer">
+                    <div>
+                        <i class="fa-solid fa-comment"></i>
+                        <li>Customer</li>
+                    </div>
+                </router-link>
             </ul>
         </div>
 
