@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { collection, doc, DocumentData, getDocs, updateDoc } from 'firebase/firestore';
+import { collection, doc, DocumentData, getDocs, orderBy, query, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 const customers = ref<DocumentData[]>([])
+const sortOrder = ref('desc');
 
 function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
@@ -13,9 +14,18 @@ function sendEmail(email: string) {
     window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`);
 }
 
-const newCustomers = computed(() =>
-    customers.value.filter((customer) => customer.isRead == false)
-);
+const newCustomers = computed(() => {
+    const filtered = customers.value.filter(customer => !customer.isRead);
+
+    return filtered.sort((a, b) => {
+        const dateA = a.createAt?.toDate ? a.createAt.toDate() : new Date(a.createAt);
+        const dateB = b.createAt?.toDate ? b.createAt.toDate() : new Date(b.createAt);
+
+        return sortOrder.value === 'desc'
+            ? dateB - dateA // Giảm dần (mới nhất trước)
+            : dateA - dateB; // Tăng dần (cũ nhất trước)
+    });
+});
 const readCustomers = computed(() =>
     customers.value.filter((customer) => customer.isRead == true)
 );
@@ -55,11 +65,29 @@ async function unReadEmail(documentId: any) {
     }
 }
 
+function formatDate(date: any): string {
+    if (!date) return '';
+
+    // Chuyển đổi từ Firestore Timestamp hoặc string sang Date object
+    const d = date.toDate ? date.toDate() : new Date(date);
+
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+
+    return `${hours}:${minutes} | ${day} thg ${month}, ${year}`;
+}
+
 onMounted(async () => {
-    const getCustomers = await getDocs(collection(db, 'customers'));
-    customers.value = getCustomers.docs.map(doc => ({
-        id: doc.id, // 👈 đây là documentId
+    const q = query(collection(db, "customers"), orderBy("createAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    customers.value = querySnapshot.docs.map(doc => ({
+        id: doc.id,
         ...doc.data(),
+        // Đảm bảo createAt là Date object
+        createAt: doc.data().createAt?.toDate() || new Date()
     }));
 })
 
@@ -73,10 +101,21 @@ onMounted(async () => {
         <div class="grid grid-cols-2 gap-5">
             <div class="border-r-[1px] ">
                 <p class="text-2xl text-black pb-5">Email mới</p>
+                <div class="flex items-center mb-4">
+                    <button @click="sortOrder = sortOrder === 'desc' ? 'asc' : 'desc'"
+                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
+                        <span>Sắp xếp:</span>
+                        <span class="font-medium">
+                            {{ sortOrder === 'desc' ? 'Mới nhất trước' : 'Cũ nhất trước' }}
+                        </span>
+                        <i class="fas"
+                            :class="sortOrder === 'desc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'"></i>
+                    </button>
+                </div>
                 <div v-for="(customer) in newCustomers" :key="customer.id" class="">
                     <div class="flex items-center justify-between p-5 mr-5 border-b-[1px]">
-                        <div class="flex items-center gap-8">
-                            <div class="checkbox-wrapper-33">
+                        <div class="grid grid-cols-8 items-center gap-8">
+                            <div class=" col-span-4 checkbox-wrapper-33">
                                 <label class="checkbox">
                                     <input class="checkbox__trigger visuallyhidden" type="checkbox"
                                         @change.prevent="readEmail(customer.id)" :checked="false" />
@@ -89,14 +128,18 @@ onMounted(async () => {
                                     <p class="checkbox__textwrapper">{{ customer.email }}</p>
                                 </label>
                             </div>
-                            <p class="cursor-pointer hover:text-green-500" @click="copyToClipboard(customer.email)"><i
+                            <p class="col-span-1 cursor-pointer hover:text-green-500"
+                                @click="copyToClipboard(customer.email)"><i
                                     class="fa-solid fa-copy text-green-500"></i><span class="text-sm">
                                     Copy</span></p>
+                            <p class="col-span-2 text-[12px]">{{ formatDate(customer.createAt) }}</p>
+                            <p @click="sendEmail(customer.email)"
+                                class="col-span-1 cursor-pointer hover:text-green-500">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span class="text-sm"> Gửi</span>
+                            </p>
                         </div>
-                        <p @click="sendEmail(customer.email)" class="cursor-pointer hover:text-green-500">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span class="text-sm"> Gửi</span>
-                        </p>
+
                     </div>
                 </div>
             </div>
@@ -104,8 +147,8 @@ onMounted(async () => {
                 <p class="text-2xl text-black pb-5">Email đã xem</p>
                 <div v-for="(customer) in readCustomers" :key="customer.id" class="">
                     <div class="flex items-center justify-between py-5 border-b-[1px]">
-                        <div class="flex items-center gap-8">
-                            <div class="checkbox-wrapper-33">
+                        <div class="grid grid-cols-8 items-center gap-8">
+                            <div class=" col-span-5 checkbox-wrapper-33">
                                 <label class="checkbox">
                                     <input class="checkbox__trigger visuallyhidden" type="checkbox" :checked="true"
                                         @change="unReadEmail(customer.id)" />
@@ -118,9 +161,11 @@ onMounted(async () => {
                                     <p class="checkbox__textwrapper">{{ customer.email }}</p>
                                 </label>
                             </div>
-                            <p class="cursor-pointer hover:text-green-500" @click="copyToClipboard(customer.email)"><i
+                            <p class="col-span-1 cursor-pointer hover:text-green-500"
+                                @click="copyToClipboard(customer.email)"><i
                                     class="fa-solid fa-copy text-green-500"></i><span class="text-sm">
                                     Copy</span></p>
+                            <p class="col-span-2 text-[12px]">{{ formatDate(customer.createAt) }}</p>
                         </div>
                     </div>
                 </div>
