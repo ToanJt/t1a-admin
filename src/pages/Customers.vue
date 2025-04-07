@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import Loading from '../components/Loading.vue';
 import { collection, doc, DocumentData, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
