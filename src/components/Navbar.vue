@@ -38,7 +38,7 @@
                 </router-link>
                 <router-link to="/customer">
                     <div>
-                        <i class="fa-solid fa-comment"></i>
+                        <i class="fa-solid fa-inbox"></i>
                         <li>Customer</li>
                     </div>
                 </router-link>
